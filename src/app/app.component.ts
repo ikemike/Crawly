@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Bestbuy } from './bestbuy';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +14,15 @@ export class AppComponent {
   //let cheerio = require('cheerio');
   //let myData = cheerio.load('google.com');
   //console.log(myData);
-  
 }
 
+// Main application logic 
+let bb = new Bestbuy();
+
+// Get page text for product to search for
+
+// Make API request
+
+// Return API results 
 
 
