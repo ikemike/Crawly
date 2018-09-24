@@ -39,4 +39,4 @@ testem.log
 Thumbs.db
 
 #Sensitive Storage
-
+src/assets/apiKeyStorage.txt
