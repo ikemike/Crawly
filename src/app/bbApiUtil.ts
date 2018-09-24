@@ -4,11 +4,10 @@
  */
 export class BestBuyAPIUtil {
 
-    let apiKey = '';
-    
+    apiKey: string;
 
     getProductInformation(product: string) { 
-
+        console.log('test');
     }
 
 

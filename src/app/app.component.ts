@@ -18,8 +18,9 @@ export class AppComponent {
 
 // Main application logic 
 let bb = new BestBuyAPIUtil();
+bb.getProductInformation('test');
 
-bb.getProductInformation('');
+
 
 // Get page text for product to search for
 
