@@ -37,6 +37,4 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-
-# Sensitive Storage
-src/assets/apiKeyStorage.txt
+src/app/apiKeyStorage.txt
