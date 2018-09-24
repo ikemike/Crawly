@@ -40,6 +40,4 @@ Thumbs.db
 
 # Don't store the API Key
 src/app/apiKeyStorage.txt
-src/assets/apiKeyStorage.txt
-assets/apiKeyStorage.txt
-src/assets
+src/assets/private
