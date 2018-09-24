@@ -39,4 +39,4 @@ testem.log
 Thumbs.db
 
 # Don't store any API Keys
-src/assets/private/BestBuyAPIKey.txt
+src/assets/private/

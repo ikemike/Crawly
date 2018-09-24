@@ -6,8 +6,9 @@ export class BestBuyAPIUtil {
 
     apiKey: string;
 
+    
     constructor() {
-        fetch('/assets/apiKeyStorage.txt')
+        fetch('/assets/private/BestBuyAPIKey.txt')
             .then(response => response.text())
             .then(text => console.log(text));
     } 
