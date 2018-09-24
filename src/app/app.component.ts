@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Bestbuy } from './bestbuy';
+import { BestBuyAPIUtil } from './bbApiUtil';
 
 @Component({
   selector: 'app-root',
@@ -10,14 +10,16 @@ export class AppComponent {
   title = 'Crawly';
 
 
-  // Where do I put this? Did I install the module incorrectly?
+  // Where do I put this?
   //let cheerio = require('cheerio');
   //let myData = cheerio.load('google.com');
   //console.log(myData);
 }
 
 // Main application logic 
-let bb = new Bestbuy();
+let bb = new BestBuyAPIUtil();
+
+bb.getProductInformation('');
 
 // Get page text for product to search for
 
