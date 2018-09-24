@@ -37,4 +37,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Don't store the API Key
 src/app/apiKeyStorage.txt
+src/assets/apiKeyStorage.txt

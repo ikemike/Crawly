@@ -6,7 +6,15 @@ export class BestBuyAPIUtil {
 
     apiKey: string;
 
+    constructor() {
+        fetch('/assets/apiKeyStorage.txt')
+            .then(response => response.text())
+            .then(text => console.log(text));
+    } 
+
     getProductInformation(product: string) { 
+        console.log('Making request to BB API...');
+
         console.log('test');
     }
 
