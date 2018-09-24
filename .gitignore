@@ -38,6 +38,4 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Don't store the API Key
-src/app/apiKeyStorage.txt
-src/assets/private
+# Don't store any API Keys
