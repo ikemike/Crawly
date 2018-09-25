@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { BestBuyAPIUtil } from './bbApiUtil';
+import { TaffyUtil } from './taffyutil';
 
 @Component({
   selector: 'app-root',
@@ -18,8 +19,10 @@ export class AppComponent {
 
 // Main application logic 
 let bb = new BestBuyAPIUtil();
-bb.getProductInformation('6291646');
+//bb.getProductInformation('6291646');
 
+let taffyUtil = new TaffyUtil();
+taffyUtil.testFunction();
 
 
 // Get page text for product to search for
