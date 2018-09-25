@@ -40,3 +40,4 @@ Thumbs.db
 
 # Don't store any API Keys
 src/assets/private/BestBuyAPIKey.txt
+src/app/keys.ts

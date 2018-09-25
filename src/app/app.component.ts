@@ -18,7 +18,7 @@ export class AppComponent {
 
 // Main application logic 
 let bb = new BestBuyAPIUtil();
-bb.getProductInformation('test');
+bb.getProductInformation('6291646');
 
 
 
