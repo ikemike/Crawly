@@ -8,8 +8,16 @@ import { PouchUtil } from './pouchutil';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
+function getProducts() {
+  let pouch = new PouchUtil();
+  pouch.setupDatabase();
+  pouch.addProductQueryResultToDB('test product 1', 'available', 1200);
+  return pouch.showAllProducts();
+}
 export class AppComponent {
   title = 'Crawly';
+  productsDatabaseString = getProducts();
 }
 
 // Main application logic 
@@ -20,10 +28,12 @@ let bb = new BestBuyAPIUtil();
 //taffyUtil.testFunction();
 
 // First attemp at PouchDB
-let pouch = new PouchUtil();
-pouch.setupDatabase();
-pouch.addProductQueryResultToDB('test product 1', 'available', 1200);
-pouch.showAllProducts();
+//let pouch = new PouchUtil();
+//pouch.setupDatabase();
+//pouch.addProductQueryResultToDB('test product 1', 'available', 1200);
+//pouch.showAllProducts();
+
+
 
 
 // Get page text for product to search for
