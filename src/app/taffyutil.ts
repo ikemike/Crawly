@@ -1,4 +1,4 @@
-import { taffy } from './taffy';
+//import { taffy } from './taffy';
 /**
  * TaffyUtil
  * 
@@ -6,7 +6,7 @@ import { taffy } from './taffy';
  * 
  */
 export class TaffyUtil {
-    TAFFY = require( 'taffy' ).taffy;
+    //TAFFY = require( 'taffy' ).taffy;
 
     testFunction() {
         /*

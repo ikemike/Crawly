@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { BestBuyAPIUtil } from './bbApiUtil';
 import { TaffyUtil } from './taffyutil';
+import { PouchUtil } from './pouchutil';
 
 @Component({
   selector: 'app-root',
@@ -9,20 +10,20 @@ import { TaffyUtil } from './taffyutil';
 })
 export class AppComponent {
   title = 'Crawly';
-
-
-  // Where do I put this?
-  //let cheerio = require('cheerio');
-  //let myData = cheerio.load('google.com');
-  //console.log(myData);
 }
 
 // Main application logic 
 let bb = new BestBuyAPIUtil();
-//bb.getProductInformation('6291646');
+//bb.getProductInformation('6291646'); // Works fine! Just make sure bb.keys is setup
 
-let taffyUtil = new TaffyUtil();
-taffyUtil.testFunction();
+//let taffyUtil = new TaffyUtil();
+//taffyUtil.testFunction();
+
+// First attemp at PouchDB
+let pouch = new PouchUtil();
+pouch.setupDatabase();
+pouch.addProductQueryResultToDB('test product 1', 'available', 1200);
+pouch.showAllProducts();
 
 
 // Get page text for product to search for
