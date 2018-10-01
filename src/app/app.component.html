@@ -23,3 +23,10 @@
 Database String:<br/>
 {{ productsDatabaseString }}<br/>
 Should show up here...
+
+<br/><br/>
+Other Formula Field:<br/>
+<li *ngFor="let product of products">
+  {{ product.name }} {{ product.price }}
+</li>
+

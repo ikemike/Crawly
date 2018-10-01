@@ -1,3 +1,6 @@
+/**
+ * THIS CLASS IS NO LONGER IN USE
+ */
 //import pouchDB from 'pouchdb' // why don't I need this?? 
 declare let require: any;
 
@@ -30,11 +33,24 @@ export class PouchUtil {
     }
 
     showAllProducts() {
-        this.db.allDocs({include_docs: true, descending: true}, function(err, doc) {
+        const PouchDB = require('pouchdb').default;
+        const myDB = new PouchDB('my_database');
+        let docRows; 
+
+        myDB.allDocs({include_docs: true, descending: true}, function(err, doc) {
             console.log(doc.rows);
-            //redrawTodosUI(doc.rows);
-        });
-          
+            docRows = doc.rows;
+        }); 
+        return docRows;
     }
+
+    promiseProductsQuery() {
+        const PouchDB = require('pouchdb').default;
+        const myDB = new PouchDB('my_database');
+
+        return myDB.allDocs({include_docs: true, descending: true}, function(err, doc) {
+        });
+    }
+
 }
  
