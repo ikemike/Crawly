@@ -17,25 +17,40 @@ export class BestBuyAPIService {
      * Get and return product information via an HTTP request
      */
     getProductInformation(productSKU: string) { 
-        let url = "https://api.bestbuy.com/v1/products/" + productSKU + ".json" + "?apiKey=" + this.serv_k;
+        let productInformation = {};
+        //let url = "https://api.bestbuy.com/v1/products/" + productSKU + ".json" + "?apiKey=" + this.serv_k;
+        let url = "http://localhost:4200/";
 
-        const Http = new XMLHttpRequest();
-        Http.open("GET", url);
-        Http.send();
+        const http = new XMLHttpRequest();
+        http.open("GET", url);
+        http.send();
 
-        Http.onreadystatechange = (e) => {
-        if (Http.readyState == 4 && Http.status == 200) {
-            let resp = JSON.parse(Http.responseText);
+        http.onreadystatechange = (e) => {
+        if (http.readyState == 4 && http.status == 200) {
+            //let resp = JSON.parse(http.responseText);
+            let resp = JSON.parse(`{"name":"gpu product 1", "orderable":"false"}`);
 
             // Construct a product object
-            let retrievedProduct = this.constructProductFromResponse(resp);
+            productInformation = this.constructProductFromResponse(resp);
+            return productInformation;
 
-            // Return the new object
-            return retrievedProduct;
             } else {
-                return this.constructProductFromResponse("na");
+                productInformation = this.constructProductFromResponse("na");
+                return productInformation;
             }
        }
+    }
+
+    getProductInformationViaFetch(productSKU: string) {
+        let url = "http://localhost:4200/";
+        let resp = JSON.parse(`{"name":"gpu product 1", "orderable":"false"}`);
+
+
+        
+        fetch(url)
+        .then(data => { return 'test' })
+        .then(res=>{ return 'test' })
+        
     }
 
     /**
@@ -82,6 +97,7 @@ export class BestBuyAPIService {
         addToCartUrl: "https://api.bestbuy.com/click/-/6291646/cart"
         */
 
+        console.log(product);
         return product;
     }
 

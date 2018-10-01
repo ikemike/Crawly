@@ -14,15 +14,10 @@ export class AppComponent implements OnInit {
   
   public products: Array<any>;
 
-  public constructor(private database: PouchDBService, private BBApiService: BestBuyAPIService) {
+  public constructor(private database: PouchDBService, private bbApiService: BestBuyAPIService) {
     this.products = [];
     let product1 = { _id: '5', name: 'test product 5', price: 100 };
     let product2 = { _id: '6', name: 'test product 6', price: 200 };
-
-    // MAIN PROCESSING 
-    // Set timeout and do requests on a loop
-    let result = this.BBApiService.getProductInformation('productSKU');
-    console.log(result);
 
     //this.insertProduct(product1);
     //this.insertProduct(product2);
@@ -33,6 +28,8 @@ export class AppComponent implements OnInit {
    * construct the products array
    */
   public ngOnInit() {
+
+    // Construct Database
     this.database.fetch().then(result => {
       this.products = [];
       for (let i = 0; i < result.rows.length; i++) {
@@ -41,7 +38,12 @@ export class AppComponent implements OnInit {
     }, error => {
       console.error(error);
     });
+
+    // MAIN PROCESSING: Run main()
+    this.main();
   }
+
+
 
   public insertProduct(product) {
     this.database.simplePut(product);
@@ -49,6 +51,20 @@ export class AppComponent implements OnInit {
 
   public main() {
     console.log('main');
+
+    /*
+    let result = this.bbApiService.getProductInformation('productSKU').then(result => {
+      console.log('Result: ');
+      console.log(result);
+    }, error => {
+      console.error(error);
+    });
+    */
+
+    let apiResults = this.bbApiService.getProductInformationViaFetch('productSKU');
+    console.log(apiResults);
+    
+
   }
 
 
