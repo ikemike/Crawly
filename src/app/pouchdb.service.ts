@@ -42,7 +42,7 @@ export class PouchDBService {
     }
 
     public simpleMultiPut(products: any) {
-        
+
 
         this.database.bulkDocs(products, function(error, response) {
             if (error) {
@@ -75,5 +75,12 @@ export class PouchDBService {
     public getChangeListener() {
         return this.listener;
     }
+
+    public fetchChanges() {
+        return this.database.changes({live: true, since: 'now'}).on('change', function() {
+
+        });
+    }
+   
 
 }

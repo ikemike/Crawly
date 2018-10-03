@@ -34,10 +34,15 @@ export class AppComponent implements OnInit {
       console.error(error);
     });
 
+    setInterval(()=>this.main(), 30000)
+
     //this.database.simpleDeleteAll();
 
     // MAIN PROCESSING: Run main()
-    this.main();
+    //this.main();
+
+    
+
   }
 
   public main() {
@@ -66,13 +71,26 @@ export class AppComponent implements OnInit {
 
       console.log(constructedProducts);
       this.database.simpleMultiPut(constructedProducts);
-    
+      this.rerenderProducts();
     }, error => {
 
       console.log(error);
 
     });
 
+    
+
+  }
+
+  public rerenderProducts() {
+    this.database.fetch().then(result => {
+      this.products = [];
+      for (let i = 0; i < result.rows.length; i++) {
+        this.products.push(result.rows[i].doc);
+      }
+    }, error => {
+      console.error(error);
+    });
   }
 
   public insertProduct(product) {
