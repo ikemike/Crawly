@@ -41,8 +41,24 @@ export class PouchDBService {
         });
     }
 
+    public simpleMultiPut(products: any) {
+        
+
+        this.database.bulkDocs(products, function(error, response) {
+            if (error) {
+                return console.log(error);
+            } else {
+                console.log('Sucessfully Inserted Products')
+            }
+        });
+    }
+
     public simplePut(product: any) {
         return this.database.put(product);
+    }
+ 
+    public simpleDeleteAll() {
+        this.database.destroy();
     }
 
     public sync(remote: string) {

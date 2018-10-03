@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import { Keys } from './keys';
 
 @Injectable() 
 export class BestBuyAPIService {
@@ -8,96 +9,97 @@ export class BestBuyAPIService {
 
     public constructor() {
         if (!this.isInstantiated) {
-            this.serv_k = 'serv_k';
+            this.serv_k = new Keys().getBBApiKey();
             this.isInstantiated = true;
         } 
     }
 
     /**
      * Get and return product information via an HTTP request
+     * @param productSKU The product's SKU number
      */
-    getProductInformation(productSKU: string) { 
-        let productInformation = {};
-        //let url = "https://api.bestbuy.com/v1/products/" + productSKU + ".json" + "?apiKey=" + this.serv_k;
-        let url = "http://localhost:4200/";
-
-        const http = new XMLHttpRequest();
-        http.open("GET", url);
-        http.send();
-
-        http.onreadystatechange = (e) => {
-        if (http.readyState == 4 && http.status == 200) {
-            //let resp = JSON.parse(http.responseText);
-            let resp = JSON.parse(`{"name":"gpu product 1", "orderable":"false"}`);
-
-            // Construct a product object
-            productInformation = this.constructProductFromResponse(resp);
-            return productInformation;
-
-            } else {
-                productInformation = this.constructProductFromResponse("na");
-                return productInformation;
-            }
-       }
-    }
-
     getProductInformationViaFetch(productSKU: string) {
-        let url = "http://localhost:4200/";
-        let resp = JSON.parse(`{"name":"gpu product 1", "orderable":"false"}`);
-
-
-        
-        fetch(url)
-        .then(data => { return 'test' })
-        .then(res=>{ return 'test' })
-        
+        let url = "https://api.bestbuy.com/v1/products/" + productSKU + ".json" + "?apiKey=" + this.serv_k;
+        //let url = "http://localhost:4200/";
+        return fetch(url);
     }
+
+    getMultipleProductsViaFetch(productSKUsString: string) {
+        let url = `https://api.bestbuy.com/v1/products(sku in ( ${ productSKUsString }?apiKey=${ this.serv_k }`;
+    }
+
+    /**
+     * Attempt at retriving and parsing in one method
+     * @param productSKU The Product SKU as a string
+     */
+    getAndConstructProduct(productSKU: string) {
+       
+        let url = "https://api.bestbuy.com/v1/products/" + productSKU + ".json" + "?apiKey=" + this.serv_k;
+
+        let constructedProductPromise = fetch(url).then(fetchedResponse => {
+            // Perform an HTTP request
+            return fetchedResponse.json();
+        }).then(responseJSON => {
+            // After the HTTP request is complete, parse the data
+            let constructedProductFromJSON = this.constructProductFromResponse(responseJSON);
+            return constructedProductFromJSON;
+        });
+        return constructedProductPromise;
+    }
+
+    /**
+     * Construct Multiple new Products from a String of SKUs (comma separated)
+     * @param productSKUsString The Product SKUs as a string
+     * @return                  An array of objects (products)
+     */
+    getAndConstructMultipleProducts(productSKUsString: string) {
+        let url = `https://api.bestbuy.com/v1/products(sku in (${ productSKUsString }))?apiKey=${ this.serv_k }&format=json`;
+        let products = [];
+        let constructedProductsPromise = fetch(url).then(fetchedResponse => {
+
+            // Perform an HTTP request - On complete, return JSON
+            return fetchedResponse.json();
+            
+        }).then(responseJSON => {
+            
+            // Parse JSON by breaking each product down into a singular entry
+            let i = "";
+            for (i in responseJSON.products) {
+                products.push(this.constructProductFromResponse(responseJSON.products[i]));     
+            }
+            return products;
+        });
+        return constructedProductsPromise;
+    }
+
+    
 
     /**
      * Constructs a "Product" object from the returned JSON
      */
-    constructProductFromResponse(resp: string) {
+    constructProductFromResponse(resp: any) {
+        let id = new Date().toISOString() + resp.sku;
         let product = {
-            "id": new Date().toISOString(),
-            "name": "",  
-            "orderable": "",
-            "regularPrice": "",
-            "salePrice": "",
-            "activeUpdateDate": "",
-            "inStorePickup": "",
-            "inStoreAvailability": "",
-            "inStoreAvailabilityUpdateDate": "",
-            "itemUpdateDate": "",
-            "onlineAvailability": "",
-            "onlineAvailabilityText": "",
-            "onlineAvailabilityUpdateDate": "",
-            "priceUpdateDate": "",
-            "startDate": "",
-            "addToCartUrl": ""
+            "_id": id,
+            "name": resp.name,  
+            "orderable": resp.orderable,
+            "regularPrice": resp.regularPrice,
+            "salePrice": resp.salePrice,
+            "activeUpdateDate": resp.activeUpdateDate,
+            "inStorePickup": resp.inStorePickup,
+            "inStoreAvailability": resp.inStoreAvailability,
+            "inStoreAvailabilityUpdateDate": resp.inStoreAvailabilityUpdateDate,
+            "itemUpdateDate": resp.itemUpdateDate,
+            "onlineAvailability": resp.onlineAvailability,
+            "onlineAvailabilityText": resp.onlineAvailabilityText,
+            "onlineAvailabilityUpdateDate": resp.onlineAvailabilityUpdateDate,
+            "priceUpdateDate": resp.priceUpdateDate,
+            "startDate": resp.startDate,
+            "addToCartUrl": resp.addToCartUrl,
+            "alternateViewsImage": resp.alternateViewsImage,
+            "sku": resp.sku
         };
 
-        /*
-        console.log('Active Update Date ' + resp.activeUpdateDate);
-        console.log('In Store Availability Update ' + resp.inStoreAvailabilityUpdateDate);
-        console.log('Item Update Date ' + resp.itemUpdateDate);
-        console.log('Online Availability Update Date ' + resp.onlineAvailabilityUpdateDate);
-        console.log('Price Update Date ' + resp.priceUpdateDate);
-        */
-
-        /*
-        inStoreAvailability
-        inStorePickup
-        onlineAvailability: false
-        onlineAvailabilityText: "Shipping: Not Available"
-        onlineAvailabilityUpdateDate: "2018-09-24T17:40:13"
-        orderable: "SoldOut"
-        regularPrice: 1199.99
-        salePrice: 1199.99
-        startDate: "2018-08-20"
-        addToCartUrl: "https://api.bestbuy.com/click/-/6291646/cart"
-        */
-
-        console.log(product);
         return product;
     }
 

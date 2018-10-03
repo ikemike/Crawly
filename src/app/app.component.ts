@@ -15,12 +15,7 @@ export class AppComponent implements OnInit {
   public products: Array<any>;
 
   public constructor(private database: PouchDBService, private bbApiService: BestBuyAPIService) {
-    this.products = [];
-    let product1 = { _id: '5', name: 'test product 5', price: 100 };
-    let product2 = { _id: '6', name: 'test product 6', price: 200 };
-
-    //this.insertProduct(product1);
-    //this.insertProduct(product2);
+    this.products = []; 
   }
 
   /**
@@ -39,34 +34,50 @@ export class AppComponent implements OnInit {
       console.error(error);
     });
 
+    //this.database.simpleDeleteAll();
+
     // MAIN PROCESSING: Run main()
     this.main();
   }
 
+  public main() {
+    let productSKUsString = '6291646,6290657,6290652,6290686';
+    let productSKU = '6290652';
 
+/*
+    this.bbApiService.getAndConstructProduct(productSKU).then(constructedProductPromise => {
+      return constructedProductPromise;
+
+    }).then(constructedProduct => {
+      console.log('New Product Constructed for Entry...')
+      console.log(constructedProduct);
+      //this.insertProduct(constructedProduct);
+
+    }, error => {
+      console.log("The request or processing method has returned an error");
+      console.log(error);
+    });
+*/
+    this.bbApiService.getAndConstructMultipleProducts(productSKUsString).then(constructedProductsPromise => {
+
+      return constructedProductsPromise;
+
+    }).then(constructedProducts => {
+
+      console.log(constructedProducts);
+      this.database.simpleMultiPut(constructedProducts);
+    
+    }, error => {
+
+      console.log(error);
+
+    });
+
+  }
 
   public insertProduct(product) {
     this.database.simplePut(product);
   }
-
-  public main() {
-    console.log('main');
-
-    /*
-    let result = this.bbApiService.getProductInformation('productSKU').then(result => {
-      console.log('Result: ');
-      console.log(result);
-    }, error => {
-      console.error(error);
-    });
-    */
-
-    let apiResults = this.bbApiService.getProductInformationViaFetch('productSKU');
-    console.log(apiResults);
-    
-
-  }
-
 
 }
 
