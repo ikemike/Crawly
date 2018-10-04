@@ -1,0 +1,23 @@
+.liveProductInformationMain {
+    width: 100%;
+    height: 100px;
+}
+
+.liveProductsbar {
+    display: inline-block;
+}
+
+.historicProductInformationMain {
+    margin-top: 300px;
+}
+
+.row {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center; /* for centering 3 blocks in the center */
+    /* justify-content: space-between; for space in between */ 
+}
+.block {
+    width: 300px;
+}

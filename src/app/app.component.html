@@ -6,30 +6,51 @@
   <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
 </div>
 
-<!--
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
--->
-<h4>Product Information</h4>
-<div *ngFor="let product of products">
 
-  <img src="{{ product.alternateViewsImage }}" style="width: 80px;"/>
+<div class="liveProductInformationMain">
+  <h2>Live Product Information:</h2>
 
-  <div style="font-size:9pt;">
-    <div style="font-size: 10pt;">{{ product.name }}</div>
-    {{ product.orderable }} {{ product.salePrice }}<br/>
-    {{ product.onlineAvailabilityText }} {{ product.inStorePickupText }} 
-  </div>
+  <div class="liveProductsbar">
+    <!-- Live product information bar -->
+      <div class="row">
+
+        <span *ngFor="let product of latestProducts">
+          <div class="block">
+
+            <img src="{{ product.alternateViewsImage }}" style="height:100px;"/>
   
+            <div style="font-size:9pt;">
+              <div style="font-size: 10pt;">{{ product.name }}</div>
+              {{ product.orderable }} {{ product.salePrice }}<br/>
+              {{ product.onlineAvailabilityText }} {{ product.inStorePickupText }}<br/>
+              {{ product._id }}
+            </div>
+
+            </div>
+          </span>
+
+        </div>
+   <!-- Live product information bar -->
+  </div>
 </div>
+
+<div class="historicProductInformationMain">
+  <h4>Historic Product Information</h4>
+  <div *ngFor="let product of products">
+
+    <img src="{{ product.alternateViewsImage }}" style="width: 80px;"/>
+
+    <div style="font-size:9pt;">
+      <div style="font-size: 10pt;">{{ product.name }}</div>
+      {{ product.orderable }} {{ product.salePrice }}<br/>
+      {{ product.onlineAvailabilityText }} {{ product.inStorePickupText }}<br/>
+      {{ product._id }}
+    </div>
+
+    <br/>
+  </div>
+</div>
+
+
+
 

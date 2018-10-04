@@ -21,6 +21,10 @@ export class PouchDBService {
         return this.database.allDocs({include_docs: true});
     }
 
+    public fetchByCreatedDateDesc() {
+        return this.database.allDocs({include_docs: true, descending: true });
+    }
+
     public get(id: string) {
         return this.database.get(id);
     }
@@ -42,8 +46,6 @@ export class PouchDBService {
     }
 
     public simpleMultiPut(products: any) {
-
-
         this.database.bulkDocs(products, function(error, response) {
             if (error) {
                 return console.log(error);
@@ -76,9 +78,19 @@ export class PouchDBService {
         return this.listener;
     }
 
-    public fetchChanges() {
-        return this.database.changes({live: true, since: 'now'}).on('change', function() {
-
+    /**
+     * My method for finding the latest SKU Entry
+     */
+    public getLatestEntryBySKU(productSKU) {
+        return this.database.changes({
+            include_docs: true,
+            descending: true,
+            limit: 1,
+            filter: function (doc) {
+              return doc.sku == productSKU;
+            }
+        }).then(result => {
+            return result.results[0].doc;
         });
     }
    

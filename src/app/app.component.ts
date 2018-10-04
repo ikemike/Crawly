@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { BestBuyAPIUtil } from './bbApiUtil';
 import { PouchDBService } from './pouchdb.service';
 import { BestBuyAPIService } from "./bestbuyapi.service";
 
@@ -13,9 +12,13 @@ export class AppComponent implements OnInit {
   title = 'Crawly';
   
   public products: Array<any>;
+  public latestProducts: Array<any>;
+  public productSKUsString = '6291646,6290657,6290652,6290686';
+  public productSKUsArray = ['6291646','6290657','6290652','6290686'];
 
-  public constructor(private database: PouchDBService, private bbApiService: BestBuyAPIService) {
+  public constructor(private pouch: PouchDBService, private bbApiService: BestBuyAPIService) {
     this.products = []; 
+    this.latestProducts = [];
   }
 
   /**
@@ -25,92 +28,79 @@ export class AppComponent implements OnInit {
   public ngOnInit() {
 
     // Construct Database
-    this.database.fetch().then(result => {
-      this.products = [];
-      for (let i = 0; i < result.rows.length; i++) {
-        this.products.push(result.rows[i].doc);
-      }
-    }, error => {
-      console.error(error);
-    });
+    this.redrawFunction();
 
-    setInterval(()=>this.main(), 30000)
+    // MAIN PROCESSING LOOP 
+    //setInterval(()=>this.main(), 5000)
 
+    // Test Utilities: 
     //this.database.simpleDeleteAll();
-
-    // MAIN PROCESSING: Run main()
     //this.main();
-
-    
 
   }
 
   public main() {
-    let productSKUsString = '6291646,6290657,6290652,6290686';
-    let productSKU = '6290652';
 
-/*
-    this.bbApiService.getAndConstructProduct(productSKU).then(constructedProductPromise => {
-      return constructedProductPromise;
-
-    }).then(constructedProduct => {
-      console.log('New Product Constructed for Entry...')
-      console.log(constructedProduct);
-      //this.insertProduct(constructedProduct);
-
-    }, error => {
-      console.log("The request or processing method has returned an error");
-      console.log(error);
-    });
-*/
-    this.bbApiService.getAndConstructMultipleProducts(productSKUsString).then(constructedProductsPromise => {
+    // Perform the API request and parse the result into products
+    this.bbApiService.getAndConstructMultipleProducts(this.productSKUsString).then(constructedProductsPromise => {
 
       return constructedProductsPromise;
 
     }).then(constructedProducts => {
 
-      console.log(constructedProducts);
-      this.database.simpleMultiPut(constructedProducts);
-      this.rerenderProducts();
+      console.log('Completed API call');
+      this.pouch.simpleMultiPut(constructedProducts);
+      this.redrawFunction();
+
     }, error => {
-
       console.log(error);
-
     });
-
-    
-
   }
 
+  public redrawFunction() {
+    this.rerenderProducts();                              // Full database requery re-constructs products[]
+    this.reRenderLatestProducts(this.productSKUsArray);  // Filtered database query re-constructs latestProducts[]
+  }
+
+  /**
+   * Perform a database query and retrieve all products
+   * Set products: Array<Any>
+   */
   public rerenderProducts() {
-    this.database.fetch().then(result => {
+    this.pouch.fetch().then(result => {
       this.products = [];
-      for (let i = 0; i < result.rows.length; i++) {
-        this.products.push(result.rows[i].doc);
-      }
+
+      this.products = result.rows.map(function(aRow) {
+        return aRow.doc;
+      });
+
     }, error => {
       console.error(error);
     });
   }
 
-  public insertProduct(product) {
-    this.database.simplePut(product);
+  public reRenderLatestProducts(productSKUsArray) {
+    this.latestProducts = [];
+
+    productSKUsArray.map(aSKU => {
+      this.pouch.getLatestEntryBySKU(aSKU).then(productEntry => {
+        this.latestProducts.push(productEntry);
+      })
+    });
+
+    
+
+    /*
+    for (let i = 0; i < productSKUsArray.length; i++) {
+      this.database.getLatestEntryBySKU(productSKUsArray[i]).then(productEntry => {
+        // Singular entry should be returned
+        this.latestProducts.push(productEntry);
+      });
+    }
+    */
+
   }
 
+
+
 }
-
-
-// Main application logic 
-let bb = new BestBuyAPIUtil();
-//bb.getProductInformation('6291646'); // Works fine! Just make sure bb.keys is setup
-
-let productX = { _id: '7', name: 'test product 7', price: 1250 };
-
-
-// Get page text for product to search for
-
-// Make API request
-
-// Return API results 
-
-
