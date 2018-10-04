@@ -79,19 +79,31 @@ export class PouchDBService {
     }
 
     /**
-     * My method for finding the latest SKU Entry
+     * My method for finding the latest entry by sku -
+     * Used to display live product information
      */
     public getLatestEntryBySKU(productSKU) {
         return this.database.changes({
             include_docs: true,
             descending: true,
             limit: 1,
-            filter: function (doc) {
+            filter: function(doc) {
               return doc.sku == productSKU;
             }
         }).then(result => {
             return result.results[0].doc;
         });
+    }
+
+    public getLastInstockBySKU(productSKU) {
+        return this.database.changes({
+            include_docs: true,
+            descending: true,
+            limit: 1,
+            filter: function(doc) {
+                return doc.sku == productSKU && doc.orderable != "SoldOut"
+            }
+        })
     }
    
 

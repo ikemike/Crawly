@@ -13,12 +13,15 @@ export class AppComponent implements OnInit {
   
   public products: Array<any>;
   public latestProducts: Array<any>;
+  public latestAvailabilityInformation: Array<any>;
+
   public productSKUsString = '6291646,6290657,6290652,6290686';
   public productSKUsArray = ['6291646','6290657','6290652','6290686'];
 
   public constructor(private pouch: PouchDBService, private bbApiService: BestBuyAPIService) {
-    this.products = []; 
-    this.latestProducts = [];
+    //this.products = []; 
+    //this.latestProducts = [];
+    //this.latestAvailabilityInformation = [];
   }
 
   /**
@@ -60,6 +63,7 @@ export class AppComponent implements OnInit {
   public redrawFunction() {
     this.rerenderProducts();                              // Full database requery re-constructs products[]
     this.reRenderLatestProducts(this.productSKUsArray);  // Filtered database query re-constructs latestProducts[]
+    this.rerenderLatestStockInformation(this.productSKUsArray);
   }
 
   /**
@@ -87,9 +91,6 @@ export class AppComponent implements OnInit {
         this.latestProducts.push(productEntry);
       })
     });
-
-    
-
     /*
     for (let i = 0; i < productSKUsArray.length; i++) {
       this.database.getLatestEntryBySKU(productSKUsArray[i]).then(productEntry => {
@@ -101,6 +102,13 @@ export class AppComponent implements OnInit {
 
   }
 
-
+  public rerenderLatestStockInformation(productSKUsArray) {
+    this.latestAvailabilityInformation = [];
+    productSKUsArray.map(aSKU => {
+      this.pouch.getLastInstockBySKU(aSKU).then(productEntry => {
+        this.latestAvailabilityInformation.push(productEntry);
+      })
+    });
+  }
 
 }

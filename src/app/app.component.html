@@ -21,7 +21,7 @@
   
             <div style="font-size:9pt;">
               <div style="font-size: 10pt;">{{ product.name }}</div>
-              {{ product.orderable }} {{ product.salePrice }}<br/>
+              {{ product.orderable }} ${{ product.salePrice }}<br/>
               {{ product.onlineAvailabilityText }} {{ product.inStorePickupText }}<br/>
               {{ product._id }}
             </div>
@@ -34,6 +34,23 @@
   </div>
 </div>
 
+<div class="latestStockInformationMain">
+  <h2>Last time spotted in stock</h2>
+  <div class="row">
+    <div *ngFor="let product of latestAvailabilityInformation" class="block">
+        <div style="font-size:9pt;">
+            <div style="font-size: 10pt;">{{ product.name }}</div>
+            In Store Availability Updated: {{ product.inStoreAvailabilityUpdateDate }}<br/>
+            Online Availability Updated: {{ product.onlineAvailabilityUpdateDate }}
+            Item Updated: {{ product.itemUpdateDate }}
+            Price Updated: {{ product.priceUpdateDate }}
+            Add to Cart: {{ product.addToCartUrl }}
+          </div>
+    </div>
+  </div>
+</div>
+
+
 <div class="historicProductInformationMain">
   <h4>Historic Product Information</h4>
   <div *ngFor="let product of products">
@@ -42,7 +59,7 @@
 
     <div style="font-size:9pt;">
       <div style="font-size: 10pt;">{{ product.name }}</div>
-      {{ product.orderable }} {{ product.salePrice }}<br/>
+      {{ product.orderable }} ${{ product.salePrice }}<br/>
       {{ product.onlineAvailabilityText }} {{ product.inStorePickupText }}<br/>
       {{ product._id }}
     </div>
