@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 declare let require: any;
 var PouchDB = require("pouchdb").default;
-var PouchDBFind = require("pouchdb-find").default;
+//var PouchDBFind = require("pouchdb-find").default;
  
 
 @Injectable()
@@ -14,7 +14,7 @@ export class PouchDBService {
     public constructor() {
         if(!this.isInstantiated) {
             this.database = new PouchDB("testdb");
-            PouchDB.plugin(PouchDBFind);
+            //PouchDB.plugin(PouchDBFind);
             this.isInstantiated = true;
         }
     }

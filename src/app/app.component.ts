@@ -61,82 +61,80 @@ export class AppComponent implements OnInit {
   }
 
   public redrawFunction() {
-    this.rerenderProducts();                              // Full database requery re-constructs products[]
-    this.reRenderLatestProducts(this.productSKUsArray);  // Filtered database query re-constructs latestProducts[]
-    this.rerenderLatestStockInformation(this.productSKUsArray);
+    this.reRenderProducts();                              // Full database requery re-constructs products[]
+    //this.reRenderLatestProducts(this.productSKUsArray);  // Filtered database query re-constructs latestProducts[]
+    //this.rerenderLatestStockInformation(this.productSKUsArray);
   }
 
   /**
    * Perform a database query and retrieve all products
    * Set products: Array<Any>
    */
-  public rerenderProducts() {
+  public reRenderProducts() {
     this.pouch.fetch().then(result => {
       this.products = [];
 
       this.products = result.rows.map(function(aRow) {
         return aRow.doc;
-      });
+      })
 
     }, error => {
       console.error(error);
+
+    }).then(allProductsAfterRetrieve => {
+      // After getting all products from the database, perform additional parsing
+      this.reRenderLatestProducts(this.productSKUsArray);
+
     });
   }
 
+  /**
+   * GET/SET Latest Products (as in most-recent databse results)
+   * @param productSKUsArray 
+   */
   public reRenderLatestProducts(productSKUsArray) {
-    /*
-    this.latestProducts = [];
 
-    productSKUsArray.map(aSKU => {
-      this.pouch.getLatestEntryBySKU(aSKU).then(productEntry => {
-        this.latestProducts.push(productEntry);
-      })
-    });
-    */
-
-    // attempt to parse the existing products array instead of requiring the db
+    // New method: Tries to parse the existing products array 
     let filteredResults = [];
+    let availabilityResults = [];
+
     productSKUsArray.map(aSKU => {
       let allSKUResultsForThisProduct = this.products.filter(aProduct => aProduct.sku == aSKU);
       filteredResults.push(allSKUResultsForThisProduct[allSKUResultsForThisProduct.length-1]);
     });
-    console.log('My filtered results: ');
-    console.log(filteredResults);
+
+    productSKUsArray.map(aSKU => {
+      let availableProductEntries = this.products.filter(aProduct => 
+        aProduct.orderable == 'Available' && aProduct.sku == aSKU && aProduct.onlineAvailabilityText != 'Shipping: Not Available'
+      );
+      
+      if (availableProductEntries.length > 0) {
+        availabilityResults.push(availableProductEntries[availableProductEntries.length -1]);
+      }
+      
+    });
+
     this.latestProducts = filteredResults;
-   
-
-    
-
-
-    /*
-    for (let i = 0; i < productSKUsArray.length; i++) {
-      this.database.getLatestEntryBySKU(productSKUsArray[i]).then(productEntry => {
-        // Singular entry should be returned
-        this.latestProducts.push(productEntry);
-      });
-    }
-    */
-
+    this.latestAvailabilityInformation = availabilityResults;
   }
 
+  /**
+   * Get the last time the product was spotted in stock 
+   * @param productSKUsArray 
+   */
   public rerenderLatestStockInformation(productSKUsArray) {
+    let filteredResults = [];
     this.latestAvailabilityInformation = [];
 
-    
+    /*
     productSKUsArray.map(aSKU => {
       this.pouch.getLastInstockBySKU(aSKU).then(productEntry => {
         this.latestAvailabilityInformation.push(productEntry);
       })
     });
-    
-   /*
-    productSKUsArray.map(aSKU => {
-      this.pouch.getLastInstockBySKUByFind(aSKU).then(productEntry => {
-        this.latestAvailabilityInformation.push(productEntry);
-        console.log(productEntry);
-      })
-    });
     */
+
+   // For each product in the array, 
   }
 
 }
