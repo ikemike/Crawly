@@ -1,7 +1,8 @@
 import { Injectable, EventEmitter } from '@angular/core';
 declare let require: any;
 var PouchDB = require("pouchdb").default;
-
+var PouchDBFind = require("pouchdb-find").default;
+ 
 
 @Injectable()
 export class PouchDBService {
@@ -13,6 +14,7 @@ export class PouchDBService {
     public constructor() {
         if(!this.isInstantiated) {
             this.database = new PouchDB("testdb");
+            PouchDB.plugin(PouchDBFind);
             this.isInstantiated = true;
         }
     }
@@ -105,6 +107,14 @@ export class PouchDBService {
             }
         })
     }
-   
+
+    public getLastInstockBySKUByFind(productSKU) {
+        return this.database.find({
+            selector: { 
+                sku: productSKU
+            },
+            limit: 1
+        }) 
+    }
 
 }
