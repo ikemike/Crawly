@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PouchDBService } from './pouchdb.service';
 import { BestBuyAPIService } from "./bestbuyapi.service";
+import { HttpRequestService } from "./httprequest.service";
 
 @Component({
   selector: 'app-root',
@@ -18,11 +19,7 @@ export class AppComponent implements OnInit {
   public productSKUsString = '6291646,6290657,6290652,6290686,6291648';
   public productSKUsArray = ['6291646','6290657','6290652','6290686', '6291648'];
 
-  public constructor(private pouch: PouchDBService, private bbApiService: BestBuyAPIService) {
-    //this.products = []; 
-    //this.latestProducts = [];
-    //this.latestAvailabilityInformation = [];
-  }
+  public constructor(private pouch: PouchDBService, private bbApiService: BestBuyAPIService, private httpService: HttpRequestService) {}
 
   /**
    * On page load, retrieve the existing database entries and
@@ -34,11 +31,13 @@ export class AppComponent implements OnInit {
     this.redrawFunction();
 
     // MAIN PROCESSING LOOP 
-    setInterval(()=>this.main(), 30000)
+    //setInterval(()=>this.main(), 30000)
 
     // Test Utilities: 
     //this.database.simpleDeleteAll();
     //this.main();
+
+    this.myTestHTMLtoJSONFunction();
 
   }
 
@@ -136,5 +135,11 @@ export class AppComponent implements OnInit {
 
    // For each product in the array, 
   }
+
+  public myTestHTMLtoJSONFunction() {
+    this.httpService.parseHTTPResponseToJSON();
+  }
+
+  
 
 }
