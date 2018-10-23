@@ -178,36 +178,25 @@ export class HttpRequestService {
     }
 
     public doASalesforceRequest() {
-        this.getSFAccessToken().then(fetchedResponse => {
+        this.getSFAccessToken().then(accessTokenResponse => {
             
-            let salesforceAccessToken = JSON.parse(fetchedResponse)["access_token"];
+            let accessToken = JSON.parse(accessTokenResponse)["access_token"];
             
             // Great! We have the access token, now do a REST callout
-            this.doSalesforceRestCallout(salesforceAccessToken);
+            let restEndpoint = 'https://domaindemo-dev-ed.my.salesforce.com/services/apexrest/ilem/ExampleRestResource';
+            let requestBody = `{
+                "productJSON": {
+                    "productName" : "GPU 1",
+                    "productPrice" : "1000"
+                }
+            }`;
+
+            this.doSalesforceRestCallout(accessToken, restEndpoint, requestBody).then(endpointResponse => {
+                console.log(endpointResponse);
+            });
 
         });
 
-        let mytestjson = `
-            {
-                "agreementId" : "a3o0y0000016Jv8AAE",
-                "proposalNumber" : "141588C-5",
-                "studyNumber" : "8348-993",
-                "modNumber" : "5"
-            }
-            `;
-        let salesforceEndpoint = '';
-        /*
-        let httpResponsePromise = fetch(salesforceEndpoint, {
-            redirect: 'follow',
-            headers : {
-              'Content-Type': 'application/json',
-              'charset' : 'UTF-8',
-              'Accept' : 'application/json'
-            }
-          }).then(fetchedResponse => {
-            return fetchedResponse.text();
-          });
-          */
     }
 
     /**
@@ -236,8 +225,21 @@ export class HttpRequestService {
           return httpResponsePromise;
     }
 
-    public doSalesforceRestCallout(accessToken) {
-        
+    public doSalesforceRestCallout(accessToken, salesforceRestEndpoint, requestBody) {
+        console.log(salesforceRestEndpoint);
+        let httpResponsePromise = fetch(salesforceRestEndpoint, {
+            method: "POST",
+            body: requestBody,
+            headers : {
+                'Content-Type': 'application/json',
+                'Charset' : 'UTF-8',
+                'Accept' : 'application/json',
+                'Authorization' : `Bearer ${accessToken}`
+              }
+        }).then(fetchedResponse => {
+            return fetchedResponse.text();
+        });
+        return httpResponsePromise;
     }
 
     /**
