@@ -37,8 +37,8 @@ export class AppComponent implements OnInit {
     //this.database.simpleDeleteAll();
     //this.main();
 
-    this.myTestHTMLtoJSONFunction();
-
+    //this.myTestHTMLtoJSONFunction();
+    this.testAmazonQuery();
   }
 
   public main() {
@@ -137,7 +137,15 @@ export class AppComponent implements OnInit {
   }
 
   public myTestHTMLtoJSONFunction() {
-    this.httpService.parseHTTPResponseToJSON();
+    //this.httpService.parseHTTPResponseToJSON();
+    this.httpService.newEggRequest();
+  }
+
+  /**
+   * Test function to do an amazon page query
+   */
+  public testAmazonQuery() {
+    this.httpService.testAmazonRequest();
   }
 
   

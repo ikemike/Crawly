@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core'
+import { element } from 'protractor';
 
 @Injectable()
 export class HttpRequestService {
 
+    public htmlDocument; // Global, set once for each http request
+
     public constructor() {}
+
 
     public makeHTTPRequestReturnResponse(url: string) {
         let httpResponsePromise = fetch(url, {
@@ -15,11 +19,78 @@ export class HttpRequestService {
           return fetchedResponse.text();
         });
         return httpResponsePromise;
-      }
+    }
+
+    /**
+     * Makes a single page HTTP request and then parses the response into an HTML document 
+     */
+    public makeAndParseRequest(url) {
+        let httpRequestAndParsePromise = this.makeHTTPRequestReturnResponse(url).then(httpResponseText => {
+            // Construct a Document 
+            const parser = new DOMParser();
+            const htmlDocument = parser.parseFromString(httpResponseText, "text/html");
+            return htmlDocument;
+        });
+        return httpRequestAndParsePromise;
+    }
+
+
+    public newEggRequest() {
+        let url = 'https://www.newegg.com/Product/Product.aspx?Item=14-932-067&cm_re=rtx%202080-_-14-932-067-_-Product&cm_sp=SearchSuccess-_-INFOCARD-_-rtx%202080ti-_-14-932-067-_-2';
+        this.makeAndParseRequest(url).then(htmlDocument => {
+            let buttonElements = Array.from(htmlDocument.querySelectorAll("button"));
+            
+            for (let i = 0; i < buttonElements.length; i++) { }
+            // If buy element is still null, double check that it's not an inner button component like a <span>Buy Now</span>
+
+            //let theButtonElement = buttonElements.filter(elem => elem.className = "btn btn-primary btn-wide");
+            //console.log(theButtonElement);
+
+            //console.log(buttonElements);
+            let matchingElements; 
+
+            if (buttonElements.length > 0) {
+                for (let i = 0; i < buttonElements.length; i++) {
+                    let childNodes = buttonElements[i].childNodes;
+                    console.log(childNodes);
+                    let buttonChildElements = Array.from(buttonElements[i].querySelectorAll("*"))
+                        //.filter(elem => elem.textContent.includes("Add to Cart"));
+                        //console.log(buttonChildElements);
+                }
+                
+                
+
+                /*
+                // buttonElements is an array, so loop through all elements and find inner content
+                for (let i = 0; i < buttonElements.length; i++) {
+                    let elementChildNodes = buttonElements[i].children;
+                    for (let j = 0; j < elementChildNodes.length; j++) {
+                        let childNodeText = Array.from(elementChildNodes[j].querySelectorAll("*"))
+                            .filter(elem => elem.textContent.includes("Buy now") 
+                            || elem.textContent.includes("Add to cart"));
+
+                        matchingElements.push(elementChildNodes[j]);
+                    }
+                }
+                */
+            }
+            console.log('matching elements: ');
+            console.log(matchingElements);
+           
+
+            // Debug:
+            //console.log('All button elements: ');
+            //console.log(buttonElements);
+
+        })
+    }
+    
+
+    
 
 
     public parseHTTPResponseToJSON() {
-        let url = 'https://www.newegg.com';
+        let url = 'https://www.newegg.com/Product/ProductList.aspx?Submit=ENE&DEPA=0&Order=BESTMATCH&Description=rtx+2080ti&N=-1&isNodeId=1';
         let regexDollarPattern =  new RegExp('^(\d+|\d{1,3}(,\d{3})*)(\.\d+)?$'); // 1.00, 1,000, 1,500.50 valid 
         this.makeHTTPRequestReturnResponse(url).then(httpResponseText => {
 
@@ -29,7 +100,7 @@ export class HttpRequestService {
 
             // Parse the document to find product nodes
             let aProductElements = Array.from(htmlDocument.querySelectorAll("a"))
-                .filter(a => a.textContent.includes("GIGABYTE")); // <= Product name would go here 
+                .filter(a => a.textContent.includes("EVGA")); // <= Product name would go here 
             console.log(aProductElements);
 
 
@@ -85,5 +156,27 @@ export class HttpRequestService {
             });
 
         });
+    }
+
+    public testAmazonRequest() {
+        let msi1080tiURL = 'https://www.amazon.com/MSI-GAMING-GTX-1080-TI/dp/B06XVG7M23';
+        this.makeAndParseRequest(msi1080tiURL).then(httpResponseText => {
+
+            this.htmlDocument = httpResponseText; // Reset the global html DOM variable
+
+            let productTitle = this.getElementInnerText("productTitle");
+            let priceInformation = this.getElementInnerText("priceblock_ourprice");
+            
+            console.log(productTitle);
+            console.log(priceInformation);
+        });
+    }
+
+    /**
+     * Public Utility Method - Used to retrieve inner element content of a DOM 
+     * @param elementToFind 
+     */
+    public getElementInnerText(elementToFind) {
+        return this.htmlDocument.getElementById(elementToFind).innerHTML.trim();
     }
 }
