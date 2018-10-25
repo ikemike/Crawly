@@ -1,11 +1,11 @@
 export class Keys {
 
     getBBApiKey() {
-        
+       
     }
 
     getClientId() {
-        
+       
     }
 
     getClientSecret() {
@@ -13,14 +13,14 @@ export class Keys {
     }
 
     getSalesforceUsername() {
-        
+     
     }
 
     getSalesforcePassword() {
-        
+       
     }
 
     getSalesforceSecurityToken() {
-        
+
     }
 }
