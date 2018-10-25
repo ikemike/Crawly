@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
   public ngOnInit() {
 
     // Construct Database
-    this.redrawFunction();
+    //this.redrawFunction();
 
     // MAIN PROCESSING LOOP 
     //setInterval(()=>this.main(), 30000)
@@ -39,6 +39,7 @@ export class AppComponent implements OnInit {
 
     //this.myTestHTMLtoJSONFunction();
     this.testAmazonQuery();
+    setInterval(()=>this.testAmazonQuery(), 90000);
   }
 
   public main() {

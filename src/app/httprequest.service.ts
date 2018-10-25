@@ -5,10 +5,8 @@ import { Keys } from './keys';
 @Injectable()
 export class HttpRequestService {
 
-    public htmlDocument; // Global, set once for each http request
-
-    public constructor() {}
-
+    public htmlDocument;    // Global, set once for each http request
+    public accessToken;     // Global Session ID from Salesforce, set on first call  
 
     public makeHTTPRequestReturnResponse(url: string) {
         let httpResponsePromise = fetch(url, {
@@ -160,24 +158,78 @@ export class HttpRequestService {
     }
 
     public testAmazonRequest() {
-        let msi1080tiURL = 'https://www.amazon.com/MSI-GAMING-GTX-1080-TI/dp/B06XVG7M23';
-        this.makeAndParseRequest(msi1080tiURL).then(httpResponseText => {
+        let zotacAmp1080ti= 'https://www.amazon.com/ZOTAC-GeForce-352-bit-Graphics-ZT-P10810D-10P/dp/B06XXVVQYH';
+        let zotacAmpExtreme1080ti = 'https://www.amazon.com/ZOTAC-GeForce-Extreme-Graphics-ZT-P10810F-10P/dp/B07113WJPC';
+        let asusRogStrix1080ti = 'https://www.amazon.com/STRIX-GeForce-Gaming-Graphics-ROG-STRIX-GTX1080TI-11G-GAMING/dp/B06XY25VTC';
+        let msiGaming1080ti = 'https://www.amazon.com/MSI-GAMING-GTX-1080-TI/dp/B06XVG7M23';
+        let evgaBlackGaming1080ti = 'https://www.amazon.com/EVGA-Optimized-Interlaced-Graphics-11G-P4-6393-KR/dp/B06Y11DFZ3';
+        let founders1080ti = 'https://www.amazon.com/Nvidia-GEFORCE-GTX-1080-Ti/dp/B06XH5ZCLP';
+        let gigabyteAorus1080ti = 'https://www.amazon.com/Gigabyte-GeForce-Graphic-GV-N108TAORUS-X-11GD/dp/B06XXJL3HM';
+        let evgaHybrid1080ti = 'https://www.amazon.com/EVGA-GeForce-HYBRID-GAMING-Technology/dp/B074D7S8HR';
+        let gigabyteAorusExtreme1080ti = 'https://www.amazon.com/Gigabyte-AORUS-GeForce-Graphic-GV-N108TAORUS-11GD/dp/B06XXJL3HM';
+        let gigabyteAorusGamingOc1080ti = 'https://www.amazon.com/Gigabyte-AORUS-GeForce-Graphic-GV-N108TAORUS-11GD/dp/B06XXJMDTM';
+        let msiArmor1080ti = 'https://www.amazon.com/MSI-GAMING-GTX-1080-TI/dp/B06XX3S2MF';
+        let msiDuke1080ti = 'https://www.amazon.com/MSI-GAMING-GTX-1080-TI/dp/B0722YBZGK';
+        //let msiGamingXTrio1080ti = 'https://www.amazon.com/MSI-GAMING-GTX-1080-TI/dp/B076LWZHBK';
 
-            this.htmlDocument = httpResponseText; // Reset the global html DOM variable
+        let productsArray = new Array();
+        productsArray.push(zotacAmp1080ti, zotacAmpExtreme1080ti, asusRogStrix1080ti, 
+            msiGaming1080ti, evgaBlackGaming1080ti, founders1080ti, gigabyteAorus1080ti, evgaHybrid1080ti,
+            gigabyteAorusExtreme1080ti, gigabyteAorusGamingOc1080ti, msiArmor1080ti, msiDuke1080ti
+            );
 
-            let productTitle = this.getElementInnerText("productTitle");
-            let priceInformation = this.getElementInnerText("priceblock_ourprice");
-            
-            console.log(productTitle);
-            console.log(priceInformation);
-
-            // Awesome! Now try to insert it into Salesforce! 
-            this.doASalesforceRequest();
-
-        });
+        productsArray.forEach(productUrl => {
+            this.amazonRequest(productUrl);
+        })
+        
+        
     }
 
-    public doASalesforceRequest() {
+    public amazonRequest(amazonProductURL) {
+
+        let productName = '';
+        let productPrice = '';
+
+        this.makeAndParseRequest(amazonProductURL).then(httpResponseText => {
+            this.htmlDocument = httpResponseText; // Reset the global html DOM variable
+            
+            productName = this.getElementInnerText("productTitle");
+            productPrice = this.getElementInnerText("priceblock_ourprice");
+
+            let altPriceElement = this.getElementInnerText("olp_feature_div");
+            let startPos = altPriceElement.indexOf('$');
+            let endPos = altPriceElement.indexOf('.')+3;
+            let altProductPrice = altPriceElement.substring(startPos, endPos);
+
+            // Assume if it has an alt price, it's probably lower and should be used
+            if (altProductPrice != null || altProductPrice != '') {
+                productPrice = altProductPrice;
+            }
+            console.log('Request Complete');
+
+        }).catch((err) => {
+            if (productName != '' && productPrice == '') {
+                // This product is only sold by alternative vendors, need to use a different DOM query
+                let altPriceElement = this.getElementInnerText("olp_feature_div");
+                let startPos = altPriceElement.indexOf('$');
+                let endPos = altPriceElement.indexOf('.')+3;
+                productPrice = altPriceElement.substring(startPos, endPos);
+            }
+        }).then(uhh => {
+            // Client side validation of value:
+            if (parseFloat(productPrice.replace('$','')) <= 700) {
+                this.insertIntoSalesforce(productName, productPrice);
+            }
+            //console.log('Product: ' + productName  + '\nPrice: ' + productPrice);
+
+        });
+
+        
+
+    }
+
+    public insertIntoSalesforce(productName, productPrice) {
+
         this.getSFAccessToken().then(accessTokenResponse => {
             
             let accessToken = JSON.parse(accessTokenResponse)["access_token"];
@@ -185,14 +237,12 @@ export class HttpRequestService {
             // Great! We have the access token, now do a REST callout
             let restEndpoint = 'https://domaindemo-dev-ed.my.salesforce.com/services/apexrest/ilem/ExampleRestResource';
             let requestBody = `{
-                "productJSON": {
-                    "productName" : "GPU 1",
-                    "productPrice" : "1000"
-                }
+                "productName" : "${productName}",
+                "productPrice" : "${productPrice}"
             }`;
 
             this.doSalesforceRestCallout(accessToken, restEndpoint, requestBody).then(endpointResponse => {
-                console.log(endpointResponse);
+                //console.log(endpointResponse);
             });
 
         });
@@ -203,26 +253,33 @@ export class HttpRequestService {
      * Retrieve and return a Salesforce access token (needed for API REST queries)
      */
     public getSFAccessToken() {
-        let clientId = new Keys().getClientId();
-        let clientSecret = new Keys().getClientSecret();
-        let tokenURL = 'https://domaindemo-dev-ed.my.salesforce.com/services/oauth2/token';
-        let username = new Keys().getSalesforceUsername();
-        let password = new Keys().getSalesforcePassword();
-        let securityToken = new Keys().getSalesforceSecurityToken();
 
-        let requestBody = `grant_type=password&client_id=${clientId}&client_secret=${clientSecret}&username=${username}&password=${password}${securityToken}`;
+        if (this.accessToken == null) {
 
-        let httpResponsePromise = fetch(tokenURL, {
-            redirect: 'follow',
-            method: "POST",
-            body: requestBody,
-            headers : {
-              "Content-Type": "application/x-www-form-urlencoded",
-            }
-          }).then(fetchedResponse => {
-            return fetchedResponse.text();
-          });
-          return httpResponsePromise;
+            let clientId = new Keys().getClientId();
+            let clientSecret = new Keys().getClientSecret();
+            let tokenURL = 'https://domaindemo-dev-ed.my.salesforce.com/services/oauth2/token';
+            let username = new Keys().getSalesforceUsername();
+            let password = new Keys().getSalesforcePassword();
+            let securityToken = new Keys().getSalesforceSecurityToken();
+
+            let requestBody = `grant_type=password&client_id=${clientId}&client_secret=${clientSecret}&username=${username}&password=${password}${securityToken}`;
+
+            let httpResponsePromise = fetch(tokenURL, {
+                redirect: 'follow',
+                method: "POST",
+                body: requestBody,
+                headers : {
+                "Content-Type": "application/x-www-form-urlencoded",
+                }
+            }).then(fetchedResponse => {
+                return fetchedResponse.text();
+            });
+            this.accessToken = httpResponsePromise;
+            return httpResponsePromise;
+        } else {
+            return this.accessToken;
+        }
     }
 
     public doSalesforceRestCallout(accessToken, salesforceRestEndpoint, requestBody) {
@@ -249,4 +306,5 @@ export class HttpRequestService {
     public getElementInnerText(elementToFind) {
         return this.htmlDocument.getElementById(elementToFind).innerHTML.trim();
     }
+
 }
