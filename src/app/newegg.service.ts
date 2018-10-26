@@ -35,6 +35,11 @@ export class NeweggService {
       let productName = htmlResponseDOM.querySelector('[itemprop="price"]').getAttribute("content");
       let productPrice = htmlResponseDOM.querySelector('[id*="grpDescrip_"]').firstElementChild.innerHTML.trim();
 
+      let constructAProductJSON = `{ 
+        "name" : ${productName}, "productPrice" : ${productPrice}, "origin" : "newEgg" 
+      }`;
+
+
       console.log(productName);
       console.log(productPrice);
       let testJSONresponse = `{
@@ -47,6 +52,9 @@ export class NeweggService {
       this.sfService.doSalesforceRestCallout(testJSONresponse);
     });
   }
+
+  
+  
 
   /* MAIN */
   public testNeweggServiceClass() {
