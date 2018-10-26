@@ -214,10 +214,12 @@ export class HttpRequestService {
                 let startPos = altPriceElement.indexOf('$');
                 let endPos = altPriceElement.indexOf('.')+3;
                 productPrice = altPriceElement.substring(startPos, endPos);
+            } else {
+                console.log(err);
             }
         }).then(uhh => {
             // Client side validation of value:
-            if (parseFloat(productPrice.replace('$','')) <= 700) {
+            if (parseFloat(productPrice.replace('$','')) <= 590) {
                 this.insertIntoSalesforce(productName, productPrice);
             }
             //console.log('Product: ' + productName  + '\nPrice: ' + productPrice);

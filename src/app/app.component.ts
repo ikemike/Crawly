@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { PouchDBService } from './pouchdb.service';
 import { BestBuyAPIService } from "./bestbuyapi.service";
 import { HttpRequestService } from "./httprequest.service";
+import { NeweggService } from './newegg.service';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,12 @@ export class AppComponent implements OnInit {
   public productSKUsString = '6291646,6290657,6290652,6290686,6291648';
   public productSKUsArray = ['6291646','6290657','6290652','6290686', '6291648'];
 
-  public constructor(private pouch: PouchDBService, private bbApiService: BestBuyAPIService, private httpService: HttpRequestService) {}
+  public constructor(private pouch: PouchDBService, 
+    private bbApiService: BestBuyAPIService, 
+    private httpService: HttpRequestService,
+    private neweggService: NeweggService) {}
+    
+    
 
   /**
    * On page load, retrieve the existing database entries and
@@ -39,8 +45,12 @@ export class AppComponent implements OnInit {
     //this.main();
 
     //this.myTestHTMLtoJSONFunction();
-    this.testAmazonQuery();
-    setInterval(()=>this.testAmazonQuery(), 90000);
+
+    //this.testAmazonQuery();
+    //setInterval(()=>this.testAmazonQuery(), 60000);
+    this.neweggService.testNeweggServiceClass();
+ 
+    
   }
 
   public main() {
