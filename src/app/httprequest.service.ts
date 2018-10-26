@@ -33,61 +33,6 @@ export class HttpRequestService {
         return httpRequestAndParsePromise;
     }
 
-
-    public newEggRequest() {
-        let url = 'https://www.newegg.com/Product/Product.aspx?Item=14-932-067&cm_re=rtx%202080-_-14-932-067-_-Product&cm_sp=SearchSuccess-_-INFOCARD-_-rtx%202080ti-_-14-932-067-_-2';
-        this.makeAndParseRequest(url).then(htmlDocument => {
-            let buttonElements = Array.from(htmlDocument.querySelectorAll("button"));
-            
-            for (let i = 0; i < buttonElements.length; i++) { }
-            // If buy element is still null, double check that it's not an inner button component like a <span>Buy Now</span>
-
-            //let theButtonElement = buttonElements.filter(elem => elem.className = "btn btn-primary btn-wide");
-            //console.log(theButtonElement);
-
-            //console.log(buttonElements);
-            let matchingElements; 
-
-            if (buttonElements.length > 0) {
-                for (let i = 0; i < buttonElements.length; i++) {
-                    let childNodes = buttonElements[i].childNodes;
-                    console.log(childNodes);
-                    let buttonChildElements = Array.from(buttonElements[i].querySelectorAll("*"))
-                        //.filter(elem => elem.textContent.includes("Add to Cart"));
-                        //console.log(buttonChildElements);
-                }
-                
-                
-
-                /*
-                // buttonElements is an array, so loop through all elements and find inner content
-                for (let i = 0; i < buttonElements.length; i++) {
-                    let elementChildNodes = buttonElements[i].children;
-                    for (let j = 0; j < elementChildNodes.length; j++) {
-                        let childNodeText = Array.from(elementChildNodes[j].querySelectorAll("*"))
-                            .filter(elem => elem.textContent.includes("Buy now") 
-                            || elem.textContent.includes("Add to cart"));
-
-                        matchingElements.push(elementChildNodes[j]);
-                    }
-                }
-                */
-            }
-            console.log('matching elements: ');
-            console.log(matchingElements);
-           
-
-            // Debug:
-            //console.log('All button elements: ');
-            //console.log(buttonElements);
-
-        })
-    }
-    
-
-    
-
-
     public parseHTTPResponseToJSON() {
         let url = 'https://www.newegg.com/Product/ProductList.aspx?Submit=ENE&DEPA=0&Order=BESTMATCH&Description=rtx+2080ti&N=-1&isNodeId=1';
         let regexDollarPattern =  new RegExp('^(\d+|\d{1,3}(,\d{3})*)(\.\d+)?$'); // 1.00, 1,000, 1,500.50 valid 

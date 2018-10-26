@@ -148,11 +148,6 @@ export class AppComponent implements OnInit {
    // For each product in the array, 
   }
 
-  public myTestHTMLtoJSONFunction() {
-    //this.httpService.parseHTTPResponseToJSON();
-    this.httpService.newEggRequest();
-  }
-
   /**
    * Test function to do an amazon page query
    */

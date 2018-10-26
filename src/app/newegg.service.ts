@@ -1,3 +1,9 @@
+/**
+ * NewEgg Service
+ * ------------------------------------------------
+ * Contains methods for making and parsing HTTP GET requests to newegg for product information
+ * 
+ */
 import { Injectable } from '@angular/core';
 import { SalesforceService } from './salesforce.service';
 
@@ -31,8 +37,14 @@ export class NeweggService {
 
       console.log(productName);
       console.log(productPrice);
+      let testJSONresponse = `{
+        "products" : [
+            { "name" : "test product 1", "price" : "100", "origin" : "newegg" },
+            { "name" : "test product 2", "price" : "200", "origin" : "amazon" }
+        ]
+      }`;
 
-      this.sfService.doSalesforceRestCallout('');
+      this.sfService.doSalesforceRestCallout(testJSONresponse);
     });
   }
 

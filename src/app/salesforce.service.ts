@@ -1,3 +1,9 @@
+/**
+ * Salesforce Service
+ * ------------------------------------------------
+ * Contains methods for generating a client access token and making REST API calls to Salesforce
+ * 
+ */
 import { Injectable } from '@angular/core';
 import { Keys } from './keys';
 
@@ -13,6 +19,8 @@ export class SalesforceService {
 
   /* Do a special POST callout with the salesforce access token */
   public doSalesforceRestCallout(requestBody) {
+    console.log('Request Body:');
+    console.log(requestBody);
 
     // First get the access token 
     this.getSFAccessToken().then(accessTokenResponse => {
@@ -30,7 +38,10 @@ export class SalesforceService {
             'Authorization' : `Bearer ${sfAccessToken}`
         }
       }).then(fetchedResponse => {
+        console.log(fetchedResponse);
         return fetchedResponse.text();
+      }).catch((err) => {
+        console.log(err);
       });
       return salesforceRESTPromise;
     });
@@ -58,6 +69,8 @@ export class SalesforceService {
             }
         }).then(fetchedResponse => {
             return fetchedResponse.text();
+        }).catch((err) => {
+          console.log(err);
         });
         this.accessToken = httpResponsePromise;
         return httpResponsePromise;
@@ -65,5 +78,5 @@ export class SalesforceService {
           return this.accessToken;
       }
     }
-    
+
 }
