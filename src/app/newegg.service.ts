@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
+import { SalesforceService } from './salesforce.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NeweggService {
 
-  constructor() { }
+  constructor(private sfService: SalesforceService) { }
 
   /* Utility: Makes a single page HTTP request and then parses the response into an HTML document */
   public makeHTTPRequestReturnResponseDOM(url: string) {
@@ -30,6 +31,8 @@ export class NeweggService {
 
       console.log(productName);
       console.log(productPrice);
+
+      this.sfService.doSalesforceRestCallout('');
     });
   }
 
