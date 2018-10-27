@@ -1,0 +1,74 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div style="text-align:center">
+  <h1>
+    <!-- Welcome  to {{ title }}! -->
+  </h1>
+  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+</div>
+
+<div class="liveProductInformationMain">
+  <!--<h2>Live Product Information:</h2>-->
+
+  <div class="liveProductsbar">
+    <!-- Live product information bar -->
+      <div class="row">
+
+        <!--
+        <span *ngFor="let product of latestProducts">
+          <div class="block">
+
+            <img src="{{ product.alternateViewsImage }}" style="height:100px;"/>
+  
+            <div style="font-size:9pt;">
+              <div style="font-size: 10pt;">{{ product.name }}</div>
+              {{ product.orderable }} ${{ product.salePrice }}<br/>
+              {{ product.onlineAvailabilityText }} {{ product.inStorePickupText }}<br/>
+              {{ product._id }}
+            </div>
+
+            </div>
+          </span>
+        -->
+
+        </div>
+   <!-- Live product information bar -->
+  </div>
+</div>
+
+<div class="latestStockInformationMain">
+  <!--<h2>Last time spotted in stock</h2>-->
+  <div class="row">
+    <div *ngFor="let product of latestAvailabilityInformation" class="block">
+        <div style="font-size:9pt;">
+            <div style="font-size: 10pt;">{{ product.name }}</div>
+            In Store Availability Updated: {{ product.inStoreAvailabilityUpdateDate }}<br/>
+            Online Availability Updated: {{ product.onlineAvailabilityUpdateDate }}
+            Item Updated: {{ product.itemUpdateDate }}
+            Price Updated: {{ product.priceUpdateDate }}
+            <a href="{{ product.addToCartUrl }}">Add to Cart</a>
+          </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="historicProductInformationMain">
+  <h4>Historic Product Information</h4>
+  <div *ngFor="let product of products">
+
+    <img src="{{ product.alternateViewsImage }}" style="width: 80px;"/>
+
+    <div style="font-size:9pt;">
+      <div style="font-size: 10pt;">{{ product.name }}</div>
+      {{ product.orderable }} ${{ product.salePrice }}<br/>
+      {{ product.onlineAvailabilityText }} {{ product.inStorePickupText }}<br/>
+      {{ product._id }}
+    </div>
+
+    <br/>
+  </div>
+</div>
+
+
+
+

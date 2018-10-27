@@ -1,8 +1,6 @@
 /* git update-index --assume-unchanged src\app\keys.ts */
 import { Component, OnInit } from '@angular/core';
-import { PouchDBService } from './pouchdb.service';
-import { BestBuyAPIService } from "./bestbuyapi.service";
-import { HttpRequestService } from "./httprequest.service";
+import { AmazonService } from './amazon.service';
 import { NeweggService } from './newegg.service';
 
 @Component({
@@ -15,144 +13,56 @@ export class AppComponent implements OnInit {
   title = 'Crawly';
   
   public products: Array<any>;
-  public latestProducts: Array<any>;
-  public latestAvailabilityInformation: Array<any>;
-
-  public productSKUsString = '6291646,6290657,6290652,6290686,6291648';
-  public productSKUsArray = ['6291646','6290657','6290652','6290686', '6291648'];
-
-  public constructor(private pouch: PouchDBService, 
-    private bbApiService: BestBuyAPIService, 
-    private httpService: HttpRequestService,
-    private neweggService: NeweggService) {}
+ 
+  public constructor(private amazonService: AmazonService, private newEggService: NeweggService) {
+    this.products = [];
+  }
     
-    
-
-  /**
-   * On page load, retrieve the existing database entries and
-   * construct the products array
-   */
   public ngOnInit() {
 
-    // Construct Database
-    //this.redrawFunction();
+    this.getAmazonProductURLsArray().map(aProduct => {
+      this.products.push(this.amazonService.getProductFromWebsite(aProduct));
+    });
 
-    // MAIN PROCESSING LOOP 
-    //setInterval(()=>this.main(), 30000)
+    this.getNewEggProductURLsArray().map(aProduct => {
+      this.products.push(this.newEggService.getProductFromWebsite(aProduct));
+    });
 
-    // Test Utilities: 
-    //this.database.simpleDeleteAll();
-    //this.main();
+    // No idea if this is going to work - considering these are all asyc functions
+    console.log(this.products);
 
-    //this.myTestHTMLtoJSONFunction();
+  }
 
-    //this.testAmazonQuery();
-    //setInterval(()=>this.testAmazonQuery(), 60000);
-    this.neweggService.testNeweggServiceClass();
- 
+
+  public getAmazonProductURLsArray() {
+    let zotacAmp1080ti= 'https://www.amazon.com/ZOTAC-GeForce-352-bit-Graphics-ZT-P10810D-10P/dp/B06XXVVQYH';
+    let zotacAmpExtreme1080ti = 'https://www.amazon.com/ZOTAC-GeForce-Extreme-Graphics-ZT-P10810F-10P/dp/B07113WJPC';
+    let asusRogStrix1080ti = 'https://www.amazon.com/STRIX-GeForce-Gaming-Graphics-ROG-STRIX-GTX1080TI-11G-GAMING/dp/B06XY25VTC';
+    let msiGaming1080ti = 'https://www.amazon.com/MSI-GAMING-GTX-1080-TI/dp/B06XVG7M23';
+    let evgaBlackGaming1080ti = 'https://www.amazon.com/EVGA-Optimized-Interlaced-Graphics-11G-P4-6393-KR/dp/B06Y11DFZ3';
+    let founders1080ti = 'https://www.amazon.com/Nvidia-GEFORCE-GTX-1080-Ti/dp/B06XH5ZCLP';
+    let gigabyteAorus1080ti = 'https://www.amazon.com/Gigabyte-GeForce-Graphic-GV-N108TAORUS-X-11GD/dp/B06XXJL3HM';
+    let evgaHybrid1080ti = 'https://www.amazon.com/EVGA-GeForce-HYBRID-GAMING-Technology/dp/B074D7S8HR';
+    let gigabyteAorusExtreme1080ti = 'https://www.amazon.com/Gigabyte-AORUS-GeForce-Graphic-GV-N108TAORUS-11GD/dp/B06XXJL3HM';
+    let gigabyteAorusGamingOc1080ti = 'https://www.amazon.com/Gigabyte-AORUS-GeForce-Graphic-GV-N108TAORUS-11GD/dp/B06XXJMDTM';
+    let msiArmor1080ti = 'https://www.amazon.com/MSI-GAMING-GTX-1080-TI/dp/B06XX3S2MF';
+    let msiDuke1080ti = 'https://www.amazon.com/MSI-GAMING-GTX-1080-TI/dp/B0722YBZGK';
+
+    return [
+      zotacAmp1080ti, zotacAmpExtreme1080ti, asusRogStrix1080ti, msiGaming1080ti
+      //evgaBlackGaming1080ti, founders1080ti, gigabyteAorus1080ti, evgaHybrid1080ti,
+      //gigabyteAorusExtreme1080ti, gigabyteAorusGamingOc1080ti, msiArmor1080ti, 
+      //msiDuke1080ti
+    ];
+  }
+
+  public getNewEggProductURLsArray() {
+    let evga1080ti = 'https://www.newegg.com/Product/Product.aspx?Item=N82E16814125955&cm_re=1080ti-_-14-125-955-_-Product';
     
-  }
-
-  public main() {
-
-    // Perform the API request and parse the result into products
-    this.bbApiService.getAndConstructMultipleProducts(this.productSKUsString).then(constructedProductsPromise => {
-
-      return constructedProductsPromise;
-
-    }).then(constructedProducts => {
-
-      console.log('Completed API call');
-      this.pouch.simpleMultiPut(constructedProducts);
-      this.redrawFunction();
-
-    }, error => {
-      console.log(error);
-    });
-  }
-
-  public redrawFunction() {
-    this.reRenderProducts();                              // Full database requery re-constructs products[]
-    //this.reRenderLatestProducts(this.productSKUsArray);  // Filtered database query re-constructs latestProducts[]
-    //this.rerenderLatestStockInformation(this.productSKUsArray);
-  }
-
-  /**
-   * Perform a database query and retrieve all products
-   * Set products: Array<Any>
-   */
-  public reRenderProducts() {
-    this.pouch.fetch().then(result => {
-      this.products = [];
-
-      this.products = result.rows.map(function(aRow) {
-        return aRow.doc;
-      })
-
-    }, error => {
-      console.error(error);
-
-    }).then(allProductsAfterRetrieve => {
-      // After getting all products from the database, perform additional parsing
-      this.reRenderLatestProducts(this.productSKUsArray);
-
-    });
-  }
-
-  /**
-   * GET/SET Latest Products (as in most-recent databse results)
-   * @param productSKUsArray 
-   */
-  public reRenderLatestProducts(productSKUsArray) {
-
-    // New method: Tries to parse the existing products array 
-    let filteredResults = [];
-    let availabilityResults = [];
-
-    productSKUsArray.map(aSKU => {
-      let allSKUResultsForThisProduct = this.products.filter(aProduct => aProduct.sku == aSKU);
-      filteredResults.push(allSKUResultsForThisProduct[allSKUResultsForThisProduct.length-1]);
-    });
-
-    productSKUsArray.map(aSKU => {
-      let availableProductEntries = this.products.filter(aProduct => 
-        aProduct.orderable == 'Available' && aProduct.sku == aSKU && aProduct.onlineAvailabilityText != 'Shipping: Not Available'
-      );
-      
-      if (availableProductEntries.length > 0) {
-        availabilityResults.push(availableProductEntries[availableProductEntries.length -1]);
-      }
-      
-    });
-
-    this.latestProducts = filteredResults;
-    this.latestAvailabilityInformation = availabilityResults;
-  }
-
-  /**
-   * Get the last time the product was spotted in stock 
-   * @param productSKUsArray 
-   */
-  public rerenderLatestStockInformation(productSKUsArray) {
-    let filteredResults = [];
-    this.latestAvailabilityInformation = [];
-
-    /*
-    productSKUsArray.map(aSKU => {
-      this.pouch.getLastInstockBySKU(aSKU).then(productEntry => {
-        this.latestAvailabilityInformation.push(productEntry);
-      })
-    });
-    */
-
-   // For each product in the array, 
-  }
-
-  /**
-   * Test function to do an amazon page query
-   */
-  public testAmazonQuery() {
-    this.httpService.testAmazonRequest();
+    return [
+      evga1080ti
+    ]
+  
   }
 
   
