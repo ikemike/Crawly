@@ -19,8 +19,6 @@ export class SalesforceService {
 
   /* Do a special POST callout with the salesforce access token */
   public doSalesforceRestCallout(requestBody) {
-    console.log('Request Body:');
-    console.log(requestBody);
 
     // First get the access token 
     this.getSFAccessToken().then(accessTokenResponse => {
@@ -38,7 +36,7 @@ export class SalesforceService {
             'Authorization' : `Bearer ${sfAccessToken}`
         }
       }).then(fetchedResponse => {
-        console.log(fetchedResponse);
+        //console.log(fetchedResponse);
         return fetchedResponse.text();
       }).catch((err) => {
         console.log(err);
@@ -50,6 +48,7 @@ export class SalesforceService {
     /* UTILITY: Retrieve and return a Salesforce access token (needed for API REST queries) */
     public getSFAccessToken() {
       if (this.accessToken == null) {
+        console.log('Access token was null');
   
         let clientId = this.keys.getClientId();
         let clientSecret = this.keys.getClientSecret();

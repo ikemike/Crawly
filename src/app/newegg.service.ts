@@ -22,16 +22,20 @@ export class NeweggService {
       url: url
     }
 
-    let httpRequestedDOM = this.simpleHttp.getDom(url).then(htmlResponseDOM => {
+    let productRequestPromise = this.simpleHttp.getDom(url).then(htmlResponseDOM => {
       let productName = htmlResponseDOM.querySelector('[id*="grpDescrip_"]').firstElementChild.innerHTML.trim();
       let priceText = htmlResponseDOM.querySelector('[itemprop="price"]').getAttribute("content");
       let productPrice = parseFloat(priceText);
 
       aProduct.name = productName;
       aProduct.price = productPrice;
+
+      return aProduct;
+    }).catch(err => {
+      console.log(err);
     });
 
-    return aProduct;
+    return productRequestPromise;
 
   }
 

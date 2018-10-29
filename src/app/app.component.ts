@@ -2,6 +2,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AmazonService } from './amazon.service';
 import { NeweggService } from './newegg.service';
+import { SalesforceService } from './salesforce.service';
+import { EvgaService } from './evga.service';
 
 @Component({
   selector: 'app-root',
@@ -13,23 +15,45 @@ export class AppComponent implements OnInit {
   title = 'Crawly';
   
   public products: Array<any>;
+  public productsList = {
+    "products": []
+  };
  
-  public constructor(private amazonService: AmazonService, private newEggService: NeweggService) {
+  public constructor(private amazonService: AmazonService, private newEggService: NeweggService, 
+    private sfService: SalesforceService, private evgaService: EvgaService) {
     this.products = [];
   }
-    
+
   public ngOnInit() {
+    this.main();
+    setInterval(()=>this.main(), 90000);
+  }
+    
+  public main() {
 
     this.getAmazonProductURLsArray().map(aProduct => {
-      this.products.push(this.amazonService.getProductFromWebsite(aProduct));
+      this.products.push(this.amazonService.getProductFromWebsite(aProduct)); 
     });
 
     this.getNewEggProductURLsArray().map(aProduct => {
       this.products.push(this.newEggService.getProductFromWebsite(aProduct));
     });
 
-    // No idea if this is going to work - considering these are all asyc functions
-    console.log(this.products);
+    this.getEvgaProductsURLsArray().map(aProduct => {
+      this.products.push(this.evgaService.getProductFromWebsite(aProduct));
+    })
+
+    
+
+    Promise.all(this.products).then(allProducts => {
+      this.productsList.products = allProducts;
+      this.sfService.doSalesforceRestCallout(JSON.stringify(this.productsList));
+    }).catch(err => {
+      console.log(err);
+    });
+
+    this.products = [];
+
 
   }
 
@@ -41,7 +65,6 @@ export class AppComponent implements OnInit {
     let msiGaming1080ti = 'https://www.amazon.com/MSI-GAMING-GTX-1080-TI/dp/B06XVG7M23';
     let evgaBlackGaming1080ti = 'https://www.amazon.com/EVGA-Optimized-Interlaced-Graphics-11G-P4-6393-KR/dp/B06Y11DFZ3';
     let founders1080ti = 'https://www.amazon.com/Nvidia-GEFORCE-GTX-1080-Ti/dp/B06XH5ZCLP';
-    let gigabyteAorus1080ti = 'https://www.amazon.com/Gigabyte-GeForce-Graphic-GV-N108TAORUS-X-11GD/dp/B06XXJL3HM';
     let evgaHybrid1080ti = 'https://www.amazon.com/EVGA-GeForce-HYBRID-GAMING-Technology/dp/B074D7S8HR';
     let gigabyteAorusExtreme1080ti = 'https://www.amazon.com/Gigabyte-AORUS-GeForce-Graphic-GV-N108TAORUS-11GD/dp/B06XXJL3HM';
     let gigabyteAorusGamingOc1080ti = 'https://www.amazon.com/Gigabyte-AORUS-GeForce-Graphic-GV-N108TAORUS-11GD/dp/B06XXJMDTM';
@@ -49,10 +72,10 @@ export class AppComponent implements OnInit {
     let msiDuke1080ti = 'https://www.amazon.com/MSI-GAMING-GTX-1080-TI/dp/B0722YBZGK';
 
     return [
-      zotacAmp1080ti, zotacAmpExtreme1080ti, asusRogStrix1080ti, msiGaming1080ti
-      //evgaBlackGaming1080ti, founders1080ti, gigabyteAorus1080ti, evgaHybrid1080ti,
-      //gigabyteAorusExtreme1080ti, gigabyteAorusGamingOc1080ti, msiArmor1080ti, 
-      //msiDuke1080ti
+      zotacAmp1080ti, zotacAmpExtreme1080ti, asusRogStrix1080ti, msiGaming1080ti,
+      evgaBlackGaming1080ti, founders1080ti, evgaHybrid1080ti,
+      gigabyteAorusExtreme1080ti, gigabyteAorusGamingOc1080ti, msiArmor1080ti, 
+      msiDuke1080ti
     ];
   }
 
@@ -61,8 +84,17 @@ export class AppComponent implements OnInit {
     
     return [
       evga1080ti
-    ]
+    ];
   
+  }
+
+  public getEvgaProductsURLsArray() {
+    let evga2080tiBlack = 'https://www.evga.com/products/product.aspx?pn=11G-P4-2281-KR';
+    let evga2080 = 'https://www.evga.com/products/product.aspx?pn=08G-P4-2287-KR';
+
+    return [
+      evga2080tiBlack //evga2080
+    ];
   }
 
   
