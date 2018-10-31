@@ -12,7 +12,7 @@ export class HttpRequestService {
         let httpResponsePromise = fetch(url, {
           redirect: 'follow',
           headers : {
-            'Content-Type': 'text/plain'
+           // 'Content-Type': 'text/plain'
           }
         }).then(fetchedResponse => {
           return fetchedResponse.text();

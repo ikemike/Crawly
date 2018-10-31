@@ -4,6 +4,7 @@ import { AmazonService } from './amazon.service';
 import { NeweggService } from './newegg.service';
 import { SalesforceService } from './salesforce.service';
 import { EvgaService } from './evga.service';
+import { EbayService } from './ebay.service';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,7 @@ export class AppComponent implements OnInit {
   };
  
   public constructor(private amazonService: AmazonService, private newEggService: NeweggService, 
-    private sfService: SalesforceService, private evgaService: EvgaService) {
+    private sfService: SalesforceService, private evgaService: EvgaService, private ebayService: EbayService) {
     this.products = [];
   }
 
@@ -31,9 +32,11 @@ export class AppComponent implements OnInit {
     
   public main() {
 
+    
     this.getAmazonProductURLsArray().map(aProduct => {
       this.products.push(this.amazonService.getProductFromWebsite(aProduct)); 
     });
+    
 
     this.getNewEggProductURLsArray().map(aProduct => {
       this.products.push(this.newEggService.getProductFromWebsite(aProduct));
@@ -41,22 +44,27 @@ export class AppComponent implements OnInit {
 
     this.getEvgaProductsURLsArray().map(aProduct => {
       this.products.push(this.evgaService.getProductFromWebsite(aProduct));
-    })
+    });
+  
 
-    
+    let ebayServicePromise = this.ebayService.getProductsFromWebsite(this.getSingularEbaySearchURL());
 
     Promise.all(this.products).then(allProducts => {
-      this.productsList.products = allProducts;
-      this.sfService.doSalesforceRestCallout(JSON.stringify(this.productsList));
+
+      ebayServicePromise.then(ebayProductsArray => {ebayProductsArray.forEach(aProduct => {allProducts.push(aProduct)});
+
+        this.productsList.products = allProducts;
+        console.log(this.productsList);
+        this.sfService.doSalesforceRestCallout(JSON.stringify(this.productsList));
+
+      });
+
     }).catch(err => {
       console.log(err);
     });
 
     this.products = [];
-
-
   }
-
 
   public getAmazonProductURLsArray() {
     let zotacAmp1080ti= 'https://www.amazon.com/ZOTAC-GeForce-352-bit-Graphics-ZT-P10810D-10P/dp/B06XXVVQYH';
@@ -95,6 +103,10 @@ export class AppComponent implements OnInit {
     return [
       evga2080tiBlack //evga2080
     ];
+  }
+
+  public getSingularEbaySearchURL() {
+    return 'https://www.ebay.com/sch/i.html?_from=R40&_trksid=m570.l1313&_nkw=1080+Ti&_sacat=0&LH_TitleDesc=0&LH_PrefLoc=1&_udlo=295&_sop=15&_udhi=610&_osacat=0&_odkw="1080+Ti"&LH_BIN=1&rt=nc&LH_TitleDesc=0';
   }
 
   
