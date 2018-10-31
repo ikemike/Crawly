@@ -24,6 +24,7 @@ export class EbayService {
       let allListings = htmlResponseDOM.querySelectorAll('li[class*="s-item"]');
       console.log(allListings.length);
 
+      
       allListings.forEach(aListing => {
         var aProduct = {name: "",price: 0,origin: "Ebay",url: ""};
 
@@ -44,10 +45,12 @@ export class EbayService {
         let urlDifference = 0;
 
         // Filter out intrusive products that aren't 1080 tis or are duplicates
-        if (!productName.includes('Water Block') && productName.includes('1080') && matchingProducts.length == 0) {
+        if (!productName.includes('Water Block') && productName.includes('1080') 
+          && !productName.includes('backplate') && matchingProducts.length == 0) {
           this.products.push(aProduct);
         }     
       });
+      
       return this.products;
 
     }).catch(err => {

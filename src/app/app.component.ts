@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
       ebayServicePromise.then(ebayProductsArray => {ebayProductsArray.forEach(aProduct => {allProducts.push(aProduct)});
 
         this.productsList.products = allProducts;
-        console.log(this.productsList);
+        //console.log(this.productsList);
         this.sfService.doSalesforceRestCallout(JSON.stringify(this.productsList));
 
       });
